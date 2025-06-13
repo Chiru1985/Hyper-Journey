@@ -57,6 +57,19 @@ class JourneyExperience {
         this.cameraRig = document.querySelector('#cameraRig');
         this.backpack = document.querySelector('#backpack');
         this.animatedCharacter = document.querySelector('#animated-character');
+   // Add interaction for Milestone 1 text → show panel
+const milestone1Text = document.querySelector('#milestone-1-text');
+const milestone1Panel = document.querySelector('#milestone-1-panel');
+
+milestone1Text.addEventListener('click', () => {
+    milestone1Panel.setAttribute('visible', true);
+
+    // Auto-hide panel after 5 seconds
+    setTimeout(() => {
+        milestone1Panel.setAttribute('visible', false);
+    }, 5000);
+});
+
 
         this.createUI();
         this.generateClouds();
