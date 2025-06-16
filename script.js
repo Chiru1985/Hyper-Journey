@@ -325,3 +325,64 @@ class JourneyExperience {
 
 // ✅ Start the journey
 document.addEventListener('DOMContentLoaded', () => new JourneyExperience());
+
+AFRAME.registerComponent("trigger-zone", {
+  schema: {
+    target: { type: "selector" },
+    radius: { type: "number", default: 3 }, // Default radius for the trigger zone
+    debounce: { type: "number", default: 500 } // Debounce time in ms
+  },
+
+  init: function () {
+    this.camera = document.querySelector("#player-camera"); // Reference to the player camera
+    this.inside = false; // Flag to track if camera is inside the zone
+    this.lastTriggerTime = 0;
+
+    if (!this.data.target) {
+      console.warn("trigger-zone component requires a 'target' selector.");
+    }
+  },
+
+  tick: function () {
+    const currentTime = Date.now();
+    // Debounce the tick function to prevent rapid toggling
+    if (currentTime - this.lastTriggerTime < this.data.debounce) {
+      return;
+    }
+
+    const triggerEl = this.el;
+    const cameraEl = this.camera;
+    const targetEl = this.data.target;
+
+    if (!cameraEl || !targetEl) {
+      return; // Ensure elements exist
+    }
+
+    const triggerPos = new THREE.Vector3();
+    const cameraPos = new THREE.Vector3();
+
+    triggerEl.object3D.getWorldPosition(triggerPos);
+    cameraEl.object3D.getWorldPosition(cameraPos);
+
+    const distance = triggerPos.distanceTo(cameraPos);
+
+    if (distance < this.data.radius && !this.inside) {
+      this.inside = true;
+      this.lastTriggerTime = currentTime;
+      targetEl.setAttribute("visible", true);
+      console.log(`Entered trigger zone for ${targetEl.id}`);
+
+      // Optional: Add an event for other components to react to
+      this.el.emit('trigger-entered', { target: targetEl });
+
+    } else if (distance >= this.data.radius && this.inside) {
+      this.inside = false;
+      this.lastTriggerTime = currentTime;
+      targetEl.setAttribute("visible", false);
+      console.log(`Exited trigger zone for ${targetEl.id}`);
+
+      // Optional: Add an event for other components to react to
+      this.el.emit('trigger-exited', { target: targetEl });
+    }
+  },
+});
