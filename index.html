@@ -66,7 +66,7 @@
     <!-- Camera Rig with Backpack & Character -->
     <a-entity id="cameraRig" position="0 1.6 -5">
       <a-camera id="player-camera" position="0 1.6 0" look-controls="pointerLockEnabled: false" wasd-controls="enabled: true">
-        <a-entity id="backpack" position="0.3 -0.5 -0.8" scale="0.5" visible="false"></a-entity>
+        <a-entity id="backpack" position="0.3 -0.5 -0.8" scale="0.5" visible="true"></a-entity>
       </a-camera>
       <a-entity id="animated-character" gltf-model="#character-model" position="0 0 -3.5" scale="1.3 1.3 1.3" rotation="0 180 0" animation-mixer></a-entity>
     </a-entity>
@@ -147,7 +147,13 @@
 
     <!-- 8: React Module -->
     <a-entity id="module-react" position="0 0 -115" visible="false">
-      <a-image id="module-react-icon" src="#react-icon" position="3.5 2 -5" width="2" height="1.2" class="clickable">
+<a-image id="module-react-icon"
+         src="#react-icon"
+         position="3.5 2 -5"
+         width="2"
+         height="1.2"
+         class="clickable"
+         animation__pulse="property: scale; from: 1 1 1; to: 1.3 1.3 1.3; dir: alternate; dur: 600; easing: easeInOutSine; loop: 3">
         <a-entity id="module-react-panel" visible="false" position="0 2.2 0" look-at="#player-camera">
           <a-plane width="5.5" height="2.5" color="#111" opacity="0.95" radius="0.15"></a-plane>
           <a-text value="Created dynamic, component‑based apps." align="center" wrap-count="36" color="#ffffff" width="4.5" scale="1.3"></a-text>
@@ -234,4 +240,3 @@
 
 </body>
 </html>
-

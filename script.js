@@ -4,13 +4,49 @@ const scene = document.querySelector('a-scene');
 scene.addEventListener('loaded', () => loadingScreen.classList.add('hidden'));
 
 class JourneyExperience {
+  showFloatingText(id) {
+    const icon = document.querySelector(`#${id}-icon`);
+    if (!icon) return;
+
+    const pos = icon.getAttribute('position');
+    const label = this.milestoneTitles[id] || 'Module Complete';
+
+    const text = document.createElement('a-text');
+    text.setAttribute('value', label);
+    text.setAttribute('position', `${pos.x} ${pos.y + 1.2} ${pos.z}`);
+    text.setAttribute('color', '#FFD700');
+    text.setAttribute('align', 'center');
+    text.setAttribute('scale', '1.2 1.2 1.2');
+    text.setAttribute('opacity', '0');
+
+    text.setAttribute('animation__fadein', {
+      property: 'opacity',
+      to: '1',
+      dur: 400,
+      easing: 'easeOutQuad'
+    });
+
+    text.setAttribute('animation__fadeout', {
+      property: 'opacity',
+      to: '0',
+      dur: 400,
+      delay: 1200,
+      easing: 'easeInQuad'
+    });
+
+    document.querySelector('a-scene').appendChild(text);
+
+    setTimeout(() => {
+      text.parentNode && text.parentNode.removeChild(text);
+    }, 2000);
+  }
+
   constructor() {
     this.cameraRig = null;
     this.currentMilestone = 0;
     this.isMoving = false;
     this.speed = 0.05;
     this.currentPosition = -5;
-    this.animatedItems = new Set();
 
     this.milestonePositions = [
       { z: -10, id: 'milestone-1' },
@@ -64,8 +100,7 @@ class JourneyExperience {
   onSceneReady() {
     this.cameraRig = document.querySelector('#cameraRig');
 
-    const clickableIds = Object.keys(this.milestoneTitles);
-    clickableIds.forEach(id => {
+    Object.keys(this.milestoneTitles).forEach(id => {
       const icon = document.querySelector(`#${id}-icon`);
       const panel = document.querySelector(`#${id}-panel`);
       if (icon && panel) {
@@ -81,12 +116,8 @@ class JourneyExperience {
     this.startJourney();
     this.animate();
 
-    document.getElementById('start-btn').addEventListener('click', () => {
-      this.isMoving = true;
-    });
-    document.getElementById('pause-btn').addEventListener('click', () => {
-      this.isMoving = false;
-    });
+    document.getElementById('start-btn').addEventListener('click', () => this.isMoving = true);
+    document.getElementById('pause-btn').addEventListener('click', () => this.isMoving = false);
   }
 
   createUI() {
@@ -113,14 +144,14 @@ class JourneyExperience {
   }
 
   generateClouds() {
-    const cContainer = document.querySelector('#clouds-container');
+    const container = document.querySelector('#clouds-container');
     for (let i = 0; i < 15; i++) {
       const cloud = document.createElement('a-sphere');
       cloud.setAttribute('radius', Math.random() * 2 + 1);
       cloud.setAttribute('color', '#fff');
       cloud.setAttribute('position', `${(Math.random() - 0.5) * 100} ${Math.random() * 20 + 15} ${Math.random() * 200 - 20}`);
       cloud.setAttribute('material', 'opacity: 0.7');
-      cContainer.appendChild(cloud);
+      container.appendChild(cloud);
     }
   }
 
@@ -153,7 +184,8 @@ class JourneyExperience {
 
         this.isMoving = false;
         this.showMilestoneNotification(m.id);
-        this.triggerModuleClone(m.id);
+        this.showFloatingText(m.id);
+
         this.currentMilestone = i + 1;
         break;
       }
@@ -168,69 +200,7 @@ class JourneyExperience {
       this.milestoneNotification.classList.remove('show');
     }, 3000);
   }
-
- triggerModuleClone(id) {
-  const backpack = document.querySelector('#backpack');
-  if (!backpack || this.animatedItems.has(id)) return;
-
-  // Only animate for module- types
-  if (!id.startsWith('module')) return;
-
-  const original = document.querySelector(`#${id}-icon`);
-  if (!original) return;
-
-  const originalPos = original.getAttribute('position');
-
-  const clone = document.createElement('a-plane');
-  clone.setAttribute('src', original.getAttribute('src'));
-  clone.setAttribute('width', '1');
-  clone.setAttribute('height', '0.6');
-  clone.setAttribute('position', `${originalPos.x} ${originalPos.y} ${originalPos.z}`);
-  clone.setAttribute('material', 'transparent: true; opacity: 1');
-  clone.setAttribute('scale', '1 1 1');
-
-  document.querySelector('a-scene').appendChild(clone);
-
-  // Animate position into the backpack
-  clone.setAttribute('animation__move', {
-    property: 'position',
-    to: '0 1.1 -0.8',
-    dur: 2000,
-    easing: 'easeInOutQuad'
-  });
-
-  // Animate rotation
-  clone.setAttribute('animation__spin', {
-    property: 'rotation',
-    to: '0 720 360',
-    dur: 2000,
-    easing: 'easeInOutSine'
-  });
-
-  // Animate scale down
-  clone.setAttribute('animation__scale', {
-    property: 'scale',
-    to: '0.05 0.05 0.05',
-    dur: 2000,
-    easing: 'easeInOutQuad'
-  });
-
-  // Optional fade
-  clone.setAttribute('animation__fade', {
-    property: 'material.opacity',
-    to: '0.4',
-    dur: 2000
-  });
-
-  // Remove after animation
-  setTimeout(() => {
-    clone.parentNode && clone.parentNode.removeChild(clone);
-  }, 2100);
-
-  this.animatedItems.add(id);
 }
 
-}
-
-// Start experience
+// ✅ Start the journey
 document.addEventListener('DOMContentLoaded', () => new JourneyExperience());
