@@ -30,7 +30,7 @@ class JourneyExperience {
             { z: -145, id: 'module-backend', name: 'Backend/SEO/Accessibility Module' },
             { z: -160, id: 'module-client', name: 'Client Project Module' },
             { z: -175, id: 'module-webxr', name: 'WebXR Module' },
-            { z: -190, id: 'final-portal', name: 'Final Destination' }
+            { z: -190, id: 'final-portal', name: 'Towards the New Future' }
         ];
 
         this.init();
@@ -58,26 +58,24 @@ class JourneyExperience {
         this.backpack = document.querySelector('#backpack');
         this.animatedCharacter = document.querySelector('#animated-character');
 
-        // Add interaction for Milestone 1 text → show panel
-        const milestone1Text = document.querySelector('#milestone-1-text');
+        // Milestone 1 interaction: show info panel (already positioned inside flag)
+        const milestone1Flag = document.querySelector('#milestone-1-flag');
         const milestone1Panel = document.querySelector('#milestone-1-panel');
 
-        milestone1Text.addEventListener('click', () => {
+        milestone1Flag.addEventListener('click', () => {
             milestone1Panel.setAttribute('visible', true);
-
-            // Auto-hide panel after 5 seconds
             setTimeout(() => {
                 milestone1Panel.setAttribute('visible', false);
-            }, 5000);
+            }, 8000);
         });
 
+        // Main flow
         this.createUI();
         this.generateClouds();
         this.startJourney();
-
         this.animate();
 
-        // Add button listeners
+        // Buttons
         const startBtn = document.getElementById('start-btn');
         const pauseBtn = document.getElementById('pause-btn');
 
@@ -145,13 +143,9 @@ class JourneyExperience {
 
     animate() {
         if (this.isMoving && this.cameraRig) {
-            // Move cameraRig forward along z-axis
             this.currentPosition -= this.speed;
             this.cameraRig.setAttribute('position', `0 1.6 ${this.currentPosition}`);
 
-            // No need to manually move animatedCharacter → it is inside cameraRig, it moves with it!
-
-            // Update progress bar
             const progress = Math.min((-this.currentPosition + 5) / 195 * 100, 100);
             if (this.progressBar) {
                 this.progressBar.style.width = `${progress}%`;
@@ -187,7 +181,6 @@ class JourneyExperience {
             this.floatItemIntoBackpack('4 1 -25', '#ff6b6b');
         }
 
-        // Stop movement at EVERY milestone/module:
         this.isMoving = false;
 
         if (milestone.id === 'final-portal') {
