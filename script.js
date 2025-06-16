@@ -10,8 +10,8 @@ class JourneyExperience {
     this.isMoving = false;
     this.speed = 0.05;
     this.currentPosition = -5;
+    this.animatedItems = new Set();
 
-    // Milestone positions
     this.milestonePositions = [
       { z: -10, id: 'milestone-1' },
       { z: -25, id: 'milestone-2' },
@@ -28,7 +28,6 @@ class JourneyExperience {
       { z: -190, id: 'final-portal' }
     ];
 
-    // Milestone display names
     this.milestoneTitles = {
       'milestone-1': '2019 – Arrival in Stockholm',
       'milestone-2': '2019–2024 - Indian Grocery Store',
@@ -65,13 +64,7 @@ class JourneyExperience {
   onSceneReady() {
     this.cameraRig = document.querySelector('#cameraRig');
 
-    // Add click listeners to milestone/module icons
-    const clickableIds = [
-      'milestone-1', 'milestone-2', 'milestone-3', 'milestone-4',
-      'module-leadership', 'module-frontend', 'module-agile',
-      'module-react', 'module-figma', 'module-backend',
-      'module-client', 'module-webxr'
-    ];
+    const clickableIds = Object.keys(this.milestoneTitles);
     clickableIds.forEach(id => {
       const icon = document.querySelector(`#${id}-icon`);
       const panel = document.querySelector(`#${id}-panel`);
@@ -83,7 +76,6 @@ class JourneyExperience {
       }
     });
 
-    // UI and animation
     this.createUI();
     this.generateClouds();
     this.startJourney();
@@ -98,26 +90,22 @@ class JourneyExperience {
   }
 
   createUI() {
-    // Title
     const title = document.createElement('div');
     title.className = 'experience-title';
     title.textContent = 'The Journey of Change';
     document.body.appendChild(title);
 
-    // Progress bar
     const pContainer = document.createElement('div');
     pContainer.className = 'progress-container';
     pContainer.innerHTML = '<div class="progress-bar"></div>';
     document.body.appendChild(pContainer);
     this.progressBar = pContainer.querySelector('.progress-bar');
 
-    // Notification
     const notif = document.createElement('div');
     notif.className = 'milestone-notification';
     document.body.appendChild(notif);
     this.milestoneNotification = notif;
 
-    // Instructions
     const instructions = document.createElement('div');
     instructions.className = 'instructions';
     instructions.innerHTML = `🖱️ Mouse: Look around<br>⌨️ WASD: Move<br>📱 Tap to move<br>🥽 VR mode`;
@@ -165,6 +153,7 @@ class JourneyExperience {
 
         this.isMoving = false;
         this.showMilestoneNotification(m.id);
+        this.triggerModuleClone(m.id);
         this.currentMilestone = i + 1;
         break;
       }
@@ -179,7 +168,69 @@ class JourneyExperience {
       this.milestoneNotification.classList.remove('show');
     }, 3000);
   }
+
+ triggerModuleClone(id) {
+  const backpack = document.querySelector('#backpack');
+  if (!backpack || this.animatedItems.has(id)) return;
+
+  // Only animate for module- types
+  if (!id.startsWith('module')) return;
+
+  const original = document.querySelector(`#${id}-icon`);
+  if (!original) return;
+
+  const originalPos = original.getAttribute('position');
+
+  const clone = document.createElement('a-plane');
+  clone.setAttribute('src', original.getAttribute('src'));
+  clone.setAttribute('width', '1');
+  clone.setAttribute('height', '0.6');
+  clone.setAttribute('position', `${originalPos.x} ${originalPos.y} ${originalPos.z}`);
+  clone.setAttribute('material', 'transparent: true; opacity: 1');
+  clone.setAttribute('scale', '1 1 1');
+
+  document.querySelector('a-scene').appendChild(clone);
+
+  // Animate position into the backpack
+  clone.setAttribute('animation__move', {
+    property: 'position',
+    to: '0 1.1 -0.8',
+    dur: 2000,
+    easing: 'easeInOutQuad'
+  });
+
+  // Animate rotation
+  clone.setAttribute('animation__spin', {
+    property: 'rotation',
+    to: '0 720 360',
+    dur: 2000,
+    easing: 'easeInOutSine'
+  });
+
+  // Animate scale down
+  clone.setAttribute('animation__scale', {
+    property: 'scale',
+    to: '0.05 0.05 0.05',
+    dur: 2000,
+    easing: 'easeInOutQuad'
+  });
+
+  // Optional fade
+  clone.setAttribute('animation__fade', {
+    property: 'material.opacity',
+    to: '0.4',
+    dur: 2000
+  });
+
+  // Remove after animation
+  setTimeout(() => {
+    clone.parentNode && clone.parentNode.removeChild(clone);
+  }, 2100);
+
+  this.animatedItems.add(id);
 }
 
-// Start the experience
+}
+
+// Start experience
 document.addEventListener('DOMContentLoaded', () => new JourneyExperience());
