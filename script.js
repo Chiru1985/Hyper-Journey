@@ -69,6 +69,17 @@ class JourneyExperience {
             }, 8000);
         });
 
+        const milestone2Icon = document.querySelector('#milestone-2-icon');
+const milestone2Panel = document.querySelector('#milestone-2-panel');
+
+milestone2Icon.addEventListener('click', () => {
+    milestone2Panel.setAttribute('visible', true);
+    setTimeout(() => {
+        milestone2Panel.setAttribute('visible', false);
+    }, 8000);
+});
+
+
         // Main flow
         this.createUI();
         this.generateClouds();

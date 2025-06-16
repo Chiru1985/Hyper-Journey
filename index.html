@@ -9,13 +9,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Loading Screen -->
   <div id="loading-screen" class="loading-screen">
     <div class="loading-spinner"></div>
     <div>Loading Experience...</div>
   </div>
 
-  <!-- FIX: Added raycaster + cursor -->
   <a-scene 
     raycaster="objects: .clickable" 
     cursor="rayOrigin: mouse" 
@@ -24,7 +22,6 @@
     loading-screen="enabled: false" 
     timeout="10000">
 
-    <!-- Assets -->
     <a-assets timeout="10000">
       <img id="mudroad-texture" src="assets/RoadNew.jpg">
       <img id="hi-logo-img" src="assets/HiLogo.png">
@@ -33,99 +30,63 @@
       <a-asset-item id="grocery-model" src="assets/Grocery.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Background sky -->
     <a-sky src="assets/Beach4.png" rotation="0 -90 0"></a-sky>
 
-    <!-- Clouds -->
     <a-entity id="clouds-container"></a-entity>
 
-    <!-- Lighting -->
     <a-light type="ambient" color="#ffffff" intensity="0.8"></a-light>
     <a-light type="directional" position="10 20 5" color="#fff3cd" intensity="1.2"></a-light>
     <a-light type="point" position="0 15 0" color="#ffffff" intensity="0.6"></a-light>
 
-    <!-- Black Road -->
-    <a-plane id="road" position="0 -1 0" rotation="-90 0 0" width="8" height="1000"
-             material="src: #mudroad-texture; repeat: 1 250"></a-plane>
+    <a-plane id="road" position="0 -1 0" rotation="-90 0 0" width="8" height="1000" material="src: #mudroad-texture; repeat: 1 250"></a-plane>
+    <a-plane id="road-dashed-line" position="0 -0.94 -95" rotation="-90 0 0" width="0.2" height="190" material="src: #road-lines-texture; repeat: 1 40; transparent: true"></a-plane>
 
-    <!-- Road dashed line plane -->
-    <a-plane id="road-dashed-line" position="0 -0.94 -95" rotation="-90 0 0" width="0.2" height="190"
-             material="src: #road-lines-texture; repeat: 1 40; transparent: true"></a-plane>
-
-    <!-- Camera Rig -->
     <a-entity id="cameraRig" position="0 1.6 -5">
-      <!-- Camera -->
       <a-camera id="player-camera" position="0 1.6 0" rotation="0 0 0" wasd-controls="enabled: true" look-controls="pointerLockEnabled: false">
-        <!-- Backpack with HiLogo -->
         <a-entity id="backpack" position="0.3 -0.5 -0.8" rotation="0 15 0" scale="0.5 0.5 0.5" visible="false">
           <a-plane src="#hi-logo-img" width="0.5" height="0.5" position="0 0 0" transparent="true"></a-plane>
         </a-entity>
       </a-camera>
-
-      <!-- Animated Character -->
-      <a-entity id="animated-character" gltf-model="#character-model" position="0 0 -3.5"
-                scale="1.3 1.3 1.3" rotation="0 180 0" animation-mixer></a-entity>
+      <a-entity id="animated-character" gltf-model="#character-model" position="0 0 -3.5" scale="1.3 1.3 1.3" rotation="0 180 0" animation-mixer></a-entity>
     </a-entity>
 
     <!-- Milestone 1 -->
-<a-entity id="milestone-1" position="0 0 -20" visible="false">
-  <!-- Milestone label (optional) -->
-  <a-text id="milestone-1-text" value="2019 - Arrival in Stockholm"
-          position="0 1.5 0" align="center" color="#ffffff"
-          geometry="primitive: plane" material="opacity: 0">
-  </a-text>
-
-  <!-- Flag with panel attached -->
-  <a-image id="milestone-1-flag" src="assets/Svenska.jpg"
-           position="3.5 2 0" width="2" height="1.2" class="clickable">
-
-    <!-- ✅ Panel is now a child of the flag and sits just above -->
-    <a-entity id="milestone-1-panel" visible="false" position="0 2.0 0" look-at="#player-camera">
-      <a-plane width="5.2" height="2.2" color="#111" opacity="0.95" radius="0.15"></a-plane>
-      <a-text 
-  value="A first step in Sweden with a lot of dreams to accomplish from India."
-  position="0 0 0.01"
-  align="center"
-  wrap-count="32"
-  color="#ffffff"
-  width="4.5"
-  scale="1.2 1.2 1.2"
-  anchor="center"
-  baseline="center"
-  font="https://cdn.aframe.io/fonts/mozillavr.fnt">
-</a-text>
-
+    <a-entity id="milestone-1" position="0 0 -20" visible="false">
+      <a-text id="milestone-1-text" value="2019 - Arrival in Stockholm" position="0 1.5 0" align="center" color="#ffffff" geometry="primitive: plane" material="opacity: 0"></a-text>
+      <a-image id="milestone-1-flag" src="assets/Svenska.jpg" position="3.5 2 0" width="2" height="1.2" class="clickable">
+        <a-entity id="milestone-1-panel" visible="false" position="0 2.0 0" look-at="#player-camera">
+          <a-plane width="5.2" height="2.2" color="#111" opacity="0.95" radius="0.15"></a-plane>
+          <a-text value="A first step in Sweden with a lot of dreams to accomplish from India." position="0 0 0.01" align="center" wrap-count="32" color="#ffffff" width="4.5" scale="1.2 1.2 1.2" anchor="center" baseline="center" font="https://cdn.aframe.io/fonts/mozillavr.fnt"></a-text>
+        </a-entity>
+      </a-image>
     </a-entity>
-
-  </a-image>
-</a-entity>
-
 
     <!-- Milestone 2 -->
-    <a-entity id="milestone-2" position="4 0 -25" visible="false">
-      <a-entity id="grocery-store-model" gltf-model="#grocery-model" position="0 1 0" scale="2 2 2"></a-entity>
+    <a-entity id="milestone-2" position="0 0 -30" visible="false">
+      <a-entity id="grocery-store-model" gltf-model="#grocery-model" position="-4 1 -7" scale="2 2 2"></a-entity>
+      <a-image id="milestone-2-icon" src="assets/Store.png" position="3.5 2 0" width="2" height="1.2" class="clickable">
+        <a-entity id="milestone-2-panel" visible="false" position="0 2.2 0" look-at="#player-camera">
+          <a-plane width="5.5" height="2.5" color="#111" opacity="0.95" radius="0.15"></a-plane>
+          <a-text value="Built a community hub while managing a grocery store — learned business, service, and resilience hands-on." position="0 0 0.01" align="center" wrap-count="36" color="#ffffff" width="4.5" scale="1.3 1.3 1.3" anchor="center" baseline="center" font="https://cdn.aframe.io/fonts/mozillavr.fnt"></a-text>
+        </a-entity>
+      </a-image>
     </a-entity>
 
-    <!-- Milestone 3 -->
     <a-entity id="milestone-3" position="0 0 -40" visible="false">
       <a-text value="July 2024 - Career Shift" position="0 1.5 0" align="center" color="#ffffff"></a-text>
     </a-entity>
 
-    <!-- Milestone 4 -->
     <a-entity id="milestone-4" position="0 0 -55" visible="false">
       <a-plane src="#hi-logo-img" width="2" height="2" position="0 1 0" rotation="0 0 0" transparent="true"></a-plane>
       <a-text value="August 2024 - Hyper Island" position="0 3 0" align="center" color="#ffffff"></a-text>
     </a-entity>
 
-    <!-- Final Portal -->
     <a-entity id="final-portal" position="0 0 -190" visible="false">
       <a-torus color="#f39c12" radius="3" radius-tubular="0.3" opacity="0.8"></a-torus>
       <a-text value="Towards the Future" position="0 0 0" align="center" color="#2c3e50" scale="2 2 2"></a-text>
     </a-entity>
-
   </a-scene>
 
-  <!-- Start/Pause buttons -->
   <div class="journey-controls">
     <button id="start-btn">Start Journey</button>
     <button id="pause-btn">Pause Journey</button>
