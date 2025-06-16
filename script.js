@@ -139,7 +139,7 @@ class JourneyExperience {
 
     const instructions = document.createElement('div');
     instructions.className = 'instructions';
-    instructions.innerHTML = `🖱️ Mouse: Look around<br>⌨️ WASD: Move<br>📱 Tap to move<br>🥽 VR mode`;
+    instructions.innerHTML = `🖱️ Mouse: Look around<br>⌨️ WASD: Move<br>📱 Tap to move<br>🥽 VR mode<br><b>🖱️ Click on icons along the path to interact and learn more!</b>`;
     document.body.appendChild(instructions);
   }
 
@@ -186,6 +186,11 @@ class JourneyExperience {
         this.showMilestoneNotification(m.id);
         this.showFloatingText(m.id);
 
+        // Add module effect for specific modules
+        if (m.id.startsWith('module-')) {
+          this.createModuleEffect(m.id);
+        }
+
         this.currentMilestone = i + 1;
         break;
       }
@@ -199,6 +204,122 @@ class JourneyExperience {
     setTimeout(() => {
       this.milestoneNotification.classList.remove('show');
     }, 3000);
+  }
+
+  createModuleEffect(id) {
+    const icon = document.querySelector(`#${id}-icon`);
+    if (!icon) return;
+
+    const backpack = document.querySelector('#backpack');
+    if (!backpack) {
+      console.error('Backpack not found');
+      return;
+    }
+
+    // Get world position of backpack
+    const backpackWorldPos = new THREE.Vector3();
+    backpack.object3D.getWorldPosition(backpackWorldPos);
+    console.log('Backpack world position:', backpackWorldPos);
+
+    // Get the icon source
+    const iconSrc = icon.getAttribute('src');
+    const iconWidth = 0.7;
+    const iconHeight = 0.7;
+
+    // Get animated character's position and forward direction
+    const character = document.querySelector('#animated-character');
+    const charWorldPos = new THREE.Vector3();
+    character.object3D.getWorldPosition(charWorldPos);
+    const charDir = new THREE.Vector3(0, 0, -1); // Default forward in A-Frame
+    charDir.applyQuaternion(character.object3D.quaternion);
+    // Place the icon 2 units in front of the character
+    const startPos = {
+      x: charWorldPos.x + charDir.x * 2,
+      y: charWorldPos.y + charDir.y * 2 + 1, // slightly above character
+      z: charWorldPos.z + charDir.z * 2
+    };
+
+    // Create module-specific effect based on ID
+    switch(id) {
+      case 'module-leadership':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#FFD700');
+        break;
+      case 'module-frontend':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#00ff00');
+        break;
+      case 'module-agile':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#ffeb3b');
+        break;
+      case 'module-react':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#61DAFB');
+        break;
+      case 'module-figma':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#0ACF83');
+        break;
+      case 'module-backend':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#2196F3');
+        break;
+      case 'module-client':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#E91E63');
+        break;
+      case 'module-webxr':
+        this.createIconEffect(startPos, backpackWorldPos, iconSrc, iconWidth, iconHeight, '#9C27B0');
+        break;
+    }
+  }
+
+  createIconEffect(startPos, targetPos, iconSrc, width, height, glowColor) {
+    // Create icon clone
+    const icon = document.createElement('a-image');
+    icon.setAttribute('src', iconSrc);
+    icon.setAttribute('width', width);
+    icon.setAttribute('height', height);
+    icon.setAttribute('position', startPos);
+    icon.setAttribute('material', `shader: flat; color: ${glowColor}; opacity: 0.8`);
+    
+    // Add glow effect
+    icon.setAttribute('animation__glow', {
+      property: 'material.opacity',
+      from: 0.8,
+      to: 0.4,
+      dur: 1000,
+      dir: 'alternate',
+      loop: true
+    });
+
+    // Add floating animation
+    icon.setAttribute('animation__float', {
+      property: 'position',
+      from: `${startPos.x} ${startPos.y} ${startPos.z}`,
+      to: `${targetPos.x} ${targetPos.y} ${targetPos.z}`,
+      dur: 2000,
+      easing: 'easeInOutQuad'
+    });
+
+    // Add rotation animation
+    icon.setAttribute('animation__rotate', {
+      property: 'rotation',
+      from: '0 0 0',
+      to: '0 360 0',
+      dur: 2000,
+      loop: true
+    });
+
+    // Add scale animation
+    icon.setAttribute('animation__scale', {
+      property: 'scale',
+      from: '1 1 1',
+      to: '0.5 0.5 0.5',
+      dur: 2000,
+      easing: 'easeInOutQuad'
+    });
+
+    document.querySelector('a-scene').appendChild(icon);
+
+    // Remove after animation
+    setTimeout(() => {
+      icon.parentNode && icon.parentNode.removeChild(icon);
+    }, 4000);
   }
 }
 

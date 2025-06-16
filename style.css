@@ -79,15 +79,17 @@ body {
 /* Instructions */
 .instructions {
     position: fixed;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 16px;
-    color: #ffffff;
-    background: rgba(0,0,0,0.6);
-    padding: 6px 12px;
-    border-radius: 6px;
-    z-index: 999;
+    top: 24px;
+    right: 24px;
+    background: rgba(30, 30, 30, 0.85);
+    color: #fff;
+    padding: 16px 22px;
+    border-radius: 10px;
+    font-size: 18px;
+    z-index: 9999;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    max-width: 350px;
+    line-height: 1.5;
 }
 
 /* Milestone notification */
@@ -147,6 +149,7 @@ a-scene {
 .journey-controls button:hover {
     background-color: #2980b9;
 }
+
 .audio-controls {
   position: fixed;
   bottom: 80px;
@@ -167,4 +170,24 @@ a-scene {
 
 .audio-controls button:hover {
   background-color: #2980b9;
+}
+
+.onboarding-tooltip {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.85);
+  color: #FFD700;
+  padding: 18px 32px;
+  border-radius: 14px;
+  font-size: 1.3em;
+  z-index: 10000;
+  text-align: center;
+  box-shadow: 0 4px 24px #0008;
+  animation: fadeIn 1s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
